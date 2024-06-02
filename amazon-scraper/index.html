@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amazon Scraper</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+    }
+    input[type="text"] {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .results {
+      margin-top: 20px;
+    }
+    .product {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #fff;
+    }
+    .product img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      margin-right: 10px;
+    }
+    .product .info {
+      flex: 1;
+    }
+    .product .info h2 {
+      margin: 0;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Amazon Scraper</h1>
+    <input type="text" id="keyword" placeholder="Enter keyword...">
+    <button id="scrapeBtn">Scrape</button>
+    <div class="results" id="results"></div>
+  </div>
+
+  <script>
+    document.getElementById('scrapeBtn').addEventListener('click', async () => {
+      const keyword = document.getElementById('keyword').value;
+      if (!keyword) {
+        alert('Please enter a keyword');
+        return;
+      }
+
+      const response = await fetch(`/api/scrape?keyword=${encodeURIComponent(keyword)}`);
+      const data = await response.json();
+
+      const resultsContainer = document.getElementById('results');
+      resultsContainer.innerHTML = '';
+
+      data.forEach(product => {
+        const productElement = document.createElement('div');
+        productElement.classList.add('product');
+
+        const image = document.createElement('img');
+        image.src = product.imageUrl;
+        productElement.appendChild(image);
+
+        const info = document.createElement('div');
+        info.classList.add('info');
+
+        const title = document.createElement('h2');
+        title.textContent = product.title;
+        info.appendChild(title);
+
+        const rating = document.createElement('p');
+        rating.textContent = `Rating: ${product.rating}`;
+        info.appendChild(rating);
+
+        const reviewCount = document.createElement('p');
+        reviewCount.textContent = `Reviews: ${product.reviewCount}`;
+        info.appendChild(reviewCount);
+
+        productElement.appendChild(info);
+        resultsContainer.appendChild(productElement);
+      });
+    });
+  </script>
+</body>
+</html>
